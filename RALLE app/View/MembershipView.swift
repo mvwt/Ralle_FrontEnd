@@ -24,7 +24,7 @@ struct MembershipView: View {
             price: "$9.99 / month",
             description: "Support RALLE in democratizing fitness. $10/month covers the cost for two people to RALLE together—every month.",
             finePrint: "Valid for 12 months",
-            features: ["5–10% Merch Discounts", "RSVP Priority", "Referral Rewards"],
+            features: ["5–10% Gear Discounts", "RSVP Priority", "Referral Rewards"],
             logoName: "Ralle_Logo"
         ),
         MembershipPlan(
@@ -32,7 +32,7 @@ struct MembershipView: View {
             price: "$19.99 / month",
             description: "Support RALLE. $20/month covers the cost for four people to RALLE together—every month.",
             finePrint: "Valid for 12 months",
-            features: ["All Tier 1 Perks", "VIP Perks/Events", "15–20% Merch Discounts", "Random Exclusives"],
+            features: ["All Tier 1 Perks", "VIP Perks/Events", "15–20% Gear Discounts", "Random Exclusives"],
             logoName: "Ralle_Logo_Silver"
         ),
         MembershipPlan(
@@ -40,7 +40,7 @@ struct MembershipView: View {
             price: "$199.99 / year",
             description: "Support RALLE. $10/month covers the cost for four people to RALLE together—every month.",
             finePrint: "Valid for 12 months",
-            features: ["All Tier 1 Perks", "VIP Perks/Events", "15–20% Merch Discounts", "Random Exclusives"],
+            features: ["All Tier 1 Perks", "VIP Perks/Events", "15–20% Gear Discounts", "Random Exclusives"],
             logoName: "Ralle_Logo_Gold"
         )
     ]
@@ -113,8 +113,9 @@ struct MembershipView: View {
 
                     Text("Give any amount you choose in support of RALLE Movements. We make movement free and accessible to all. These spaces are integral to the health & well-being of our communities.")
                         .font(.footnote)
-
+                    
                     Text("Amount: 20% lifetime RALLE Merch discount for a one-time contribution of $500 or more")
+
                         .font(.caption)
                         .italic()
 

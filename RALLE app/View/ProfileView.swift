@@ -9,10 +9,10 @@ import SwiftUI
 
 struct ProfileView: View {
     // Mock data – replace with actual user info later
-    let userName = "Luke Madden"
-    let eventsCompleted = 37
+    let userName = "Michael Thomas"
+    let eventsCompleted = 4
     let membershipTier = "Tier 1"
-    let nextEventName = "Ralle Run Club NYC"
+    let nextEventName = "Urban Roots x Ralle"
     @State private var nextEventTime = Date().addingTimeInterval(5400) // 1.5 hours from now
 
     var body: some View {
@@ -41,7 +41,7 @@ struct ProfileView: View {
                 HStack(spacing: 20) {
                     statBox(title: "Events", value: "\(eventsCompleted)")
                     statBox(title: "Tier", value: membershipTier)
-                    statBox(title: "Streak", value: "5 days")
+                    statBox(title: "Streak", value: "2 days")
                 }
                 .padding(.horizontal)
 

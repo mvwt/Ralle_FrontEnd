@@ -15,25 +15,26 @@ struct MainTabView: View {
                     Image(systemName: "calendar")
                     Text("Events")
                 }
-
+            
             ProfileView()
                 .tabItem {
                     Image(systemName: "person")
                     Text("Profile")
                 }
-
+            
             MembershipView()
                 .tabItem {
                     Image(systemName: "creditcard")
                     Text("Membership")
                 }
-
-            MerchView()
-                .tabItem {
-                    Image(systemName: "bag")
-                    Text("Shop")
+            
+                    GearView()
+                        .tabItem {
+                            Image(systemName: "bag")
+                            Text("Gear")
+                        }
                 }
+                .accentColor(.black) // black icons when selected
         }
-        .accentColor(.black) // black icons when selected
     }
 }
