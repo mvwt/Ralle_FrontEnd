@@ -37,4 +37,7 @@ struct MainTabView: View {
                 .accentColor(.black) // black icons when selected
         }
     }
+#Preview {
+    MainTabView()
+
 }

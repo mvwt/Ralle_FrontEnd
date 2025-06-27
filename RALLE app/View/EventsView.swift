@@ -7,20 +7,41 @@
 
 import SwiftUI
 
+struct Event: Identifiable {
+    let id = UUID()
+    let title: String
+    let date: Date
+    let location: String
+    let spotsAvailable: Int
+    let capacity: Int
+    let imageName: String
+    let earlyAccess: Bool
+}
+
+//struct DateFormatterManager {
+//    static let shated: DateFormatter = {
+//        let Formatter = DateFormatter()
+//        Formatter.dateStyle = .medium
+//        Formatter.timeStyle = .short
+//        Formatter.locale = Locale.current
+//        return Formatter
+//        
+//        
+//    }()
+//}
+
+func customFormattedDate(_ date: Date, format: String) -> String { //used for dynamic formatting from admin panel or config file
+    let Formatter = DateFormatter()
+    Formatter.dateFormat = format
+    return Formatter.string(from: date)
+}
+
 struct EventsView: View {
-    struct Event: Identifiable {
-        let id = UUID()
-        let title: String
-        let date: String
-        let spotsAvailable: Int
-        let imageName: String
-        let earlyAccess: Bool
-    }
 
     let events: [Event] = [
-        Event(title: "Event 1", date: "June 6", spotsAvailable: 20, imageName: "shoeprints.fill", earlyAccess: false),
-        Event(title: "Event 2", date: "June 13", spotsAvailable: 13, imageName: "flame.fill", earlyAccess: true),
-        Event(title: "Event 3", date: "June 20", spotsAvailable: 18, imageName: "bolt.fill", earlyAccess: true)
+        Event(title: "Event 1", date: Date(), location: "New York", spotsAvailable: 20, capacity: 20, imageName: "shoeprints.fill", earlyAccess: false),
+        Event(title: "Event 2", date: Date(), location: "Minneapolis", spotsAvailable: 13, capacity: 20, imageName: "flame.fill", earlyAccess: true),
+        Event(title: "Event 3", date: Date(), location: "New York", spotsAvailable: 18, capacity: 35, imageName: "bolt.fill", earlyAccess: true)
     ]
 
     var body: some View {
@@ -32,7 +53,7 @@ struct EventsView: View {
                     .frame(width: 200, height: 120)
                     .padding(.top)
 
-                Text("NYC Events")
+                Text("Events")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
@@ -50,9 +71,10 @@ struct EventsView: View {
                             VStack(alignment: .leading) {
                                 Text(event.title)
                                     .font(.headline)
-                                Text(event.date)
+                                Text(customFormattedDate(event.date, format: "MMM dd"))
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                Text(event.location)
                             }
                         }
                         .padding(.vertical, 8)
@@ -63,4 +85,7 @@ struct EventsView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
+}
+#Preview {
+    EventsView()
 }
