@@ -4,141 +4,181 @@ import Stripe
 import StripePaymentSheet
 import PassKit
 
+
 struct GearView: View {
     @StateObject private var gearViewModel = GearViewModel()
-    @StateObject private var paymentViewModel = PaymentViewModel()
     
-    @State private var isLoading = false
-    @State private var isPresentingPaymentSheet = false
-    @State private var selectedItem: GearItem?
-    
-    let gearItems: [GearItem] = [
-        GearItem(id: 1, name: "RALLE Cap", price: 45, imageName: "Ralle_Hat", description: "For movement, lifestyle, and all the moments in between")
-    ]
-
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    VStack(spacing: 8) {
-                        Image("Ralle_Header")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 200, height: 120)
-                        
-                        Text("Gear")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
-                    }
-                    .padding(.top)
-                    if gearViewModel.gearItems.isEmpty {
-                        Text("no gear available...")
-                    } else {
-                        ForEach(gearViewModel.gearItems) { item in // adding viewModel gets backend involved
-                            GearItemView(
-                                item: item,
-                                gearViewModel: gearViewModel,
-                                paymentViewModel: paymentViewModel)
-                        }
-                    }
-
-                }
-                .padding(.bottom, 24)
-            }
-            .onAppear {
-                print("GearView appeared!")
-                Task {
-                    await gearViewModel.fetchGear()
+        NavigationStack {
+            List(gearViewModel.gearItems) { item in
+                NavigationLink(destination: PaymentView(gearItem: item)) {
+                    GearItemRow(item: item)
                 }
             }
-            .background(Color.white.ignoresSafeArea())
-            .navigationBarHidden(true) // Hide the default title
+            .navigationTitle("Shop Gear")
+            .task {
+                await gearViewModel.fetchGear()
+            }
         }
     }
 }
 
-
-struct GearItemView: View {
+struct GearItemRow: View {
     let item: GearItem
-    @ObservedObject var gearViewModel: GearViewModel
-    @ObservedObject var paymentViewModel: PaymentViewModel
-    
-//    @StateObject private var paymentViewModel = PaymentViewModel()
-//    @ObservedObject var viewModel: GearViewModel
-    @State private var isShowingPaymentSheet = false
-    @State private var isPreparingPaymentSheet = false
-    @State private var paymentSheet: PaymentSheet? = nil
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 16) {
-                Image(item.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .cornerRadius(12)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(item.name)
-                        .font(.headline)
-                    Text(item.description)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Text(String(format: "$%.2f", Double(item.price)/100.0))
-                        .font(.subheadline)
-                        .foregroundColor(.black)
-                }
-            }
-
-            Button(action: {
-                isPreparingPaymentSheet = true
-                paymentViewModel.preparePaymentSheet(amount: item.price)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.paymentSheet = paymentViewModel.paymentSheet
-                    self.isPreparingPaymentSheet = false
-                    self.isShowingPaymentSheet = true
-                }
-            }) {
-                if isPreparingPaymentSheet {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                } else {
-                    Text("Buy Now")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-            }
-            .disabled(isPreparingPaymentSheet)
-        }
-        .padding()
-        .background(Color.white)
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.black.opacity(0.2)))
-        .padding(.horizontal)
-        .paymentSheet(
-            isPresented: $isShowingPaymentSheet,
-            paymentSheet: paymentSheet ?? <#default value#>
-        ) { result in
-            switch result {
-            case .completed:
-                print("✅ Payment completed successfully!")
-                // Optionally trigger placeOrder(...) here
-            case .canceled:
-                print("⚠️ Payment canceled")
-            case .failed(let error):
-                print("❌ Payment failed: \(error.localizedDescription)")
+        HStack{
+            Image(item.imageName)
+                .resizable()
+                .frame(width: 60, height: 60)
+                .cornerRadius(8)
+            VStack(alignment: .leading) {
+                Text(item.name)
+                    .font(.headline)
+                Text("$\(Double(item.price)/100.0, specifier: "%.2f")")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
         }
     }
 }
+
+
+//struct GearView: View {
+//    @StateObject private var gearViewModel = GearViewModel()
+//    @StateObject private var paymentViewModel = PaymentViewModel()
+//    
+//    @State private var isLoading = false
+//    @State private var isPresentingPaymentSheet = false
+//    @State private var selectedItem: GearItem?
+//    
+//    let gearItems: [GearItem] = [
+//        GearItem(id: 1, name: "RALLE Cap", price: 45, imageName: "Ralle_Hat", description: "For movement, lifestyle, and all the moments in between")
+//    ]
+//
+//    var body: some View {
+//        NavigationView {
+//            ScrollView {
+//                VStack(spacing: 24) {
+//                    VStack(spacing: 8) {
+//                        Image("Ralle_Header")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 200, height: 120)
+//                        
+//                        Text("Gear")
+//                            .font(.title)
+//                            .fontWeight(.semibold)
+//                            .foregroundColor(.black)
+//                    }
+//                    .padding(.top)
+//                    if gearViewModel.gearItems.isEmpty {
+//                        Text("no gear available...")
+//                    } else {
+//                        ForEach(gearViewModel.gearItems) { item in // adding viewModel gets backend involved
+//                            GearItemView(
+//                                item: item,
+//                                gearViewModel: gearViewModel,
+//                                paymentViewModel: paymentViewModel)
+//                        }
+//                    }
+//
+//                }
+//                .padding(.bottom, 24)
+//            }
+//            .onAppear {
+//                print("GearView appeared!")
+//                Task {
+//                    await gearViewModel.fetchGear()
+//                }
+//            }
+//            .background(Color.white.ignoresSafeArea())
+//            .navigationBarHidden(true) // Hide the default title
+//        }
+//    }
+//}
+
+
+//struct GearItemView: View {
+//    let item: GearItem
+//    @ObservedObject var gearViewModel: GearViewModel
+//    @ObservedObject var paymentViewModel: PaymentViewModel
+//    
+////    @StateObject private var paymentViewModel = PaymentViewModel()
+////    @ObservedObject var viewModel: GearViewModel
+//    @State private var isShowingPaymentSheet = false
+//    @State private var isPreparingPaymentSheet = false
+//    @State private var paymentSheet: PaymentSheet? = nil
+//    
+//    var body: some View {
+//        VStack(alignment: .leading, spacing: 12) {
+//            HStack(alignment: .top, spacing: 16) {
+//                Image(item.imageName)
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(width: 80, height: 80)
+//                    .cornerRadius(12)
+//
+//                VStack(alignment: .leading, spacing: 4) {
+//                    Text(item.name)
+//                        .font(.headline)
+//                    Text(item.description)
+//                        .font(.subheadline)
+//                        .foregroundColor(.gray)
+//                    Text(String(format: "$%.2f", Double(item.price)/100.0))
+//                        .font(.subheadline)
+//                        .foregroundColor(.black)
+//                }
+//            }
+//
+//            Button(action: {
+//                isPreparingPaymentSheet = true
+//                paymentViewModel.preparePaymentSheet(amount: item.price)
+//                
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                    self.paymentSheet = paymentViewModel.paymentSheet
+//                    self.isPreparingPaymentSheet = false
+//                    self.isShowingPaymentSheet = true
+//                }
+//            }) {
+//                if isPreparingPaymentSheet {
+//                    ProgressView()
+//                        .frame(maxWidth: .infinity)
+//                        .padding()
+//                        .background(Color.gray)
+//                        .foregroundColor(.white)
+//                        .cornerRadius(10)
+//                } else {
+//                    Text("Buy Now")
+//                        .frame(maxWidth: .infinity)
+//                        .padding()
+//                        .background(Color.black)
+//                        .foregroundColor(.white)
+//                        .cornerRadius(10)
+//                }
+//            }
+//            .disabled(isPreparingPaymentSheet)
+//        }
+//        .padding()
+//        .background(Color.white)
+//        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.black.opacity(0.2)))
+//        .padding(.horizontal)
+//        .paymentSheet(
+//            isPresented: $isShowingPaymentSheet,
+//            paymentSheet: paymentSheet ?? <#default value#>
+//        ) { result in
+//            switch result {
+//            case .completed:
+//                print("✅ Payment completed successfully!")
+//                // Optionally trigger placeOrder(...) here
+//            case .canceled:
+//                print("⚠️ Payment canceled")
+//            case .failed(let error):
+//                print("❌ Payment failed: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+//}
 
 //struct GearItemView: View {
 //    let item: GearItem
